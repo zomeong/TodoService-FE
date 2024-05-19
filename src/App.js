@@ -2,7 +2,8 @@ import logo from './logo.svg';
 import React from 'react';
 import Hello from './Hello';
 import Todo from './Todo';
-import {Paper, List}from "@mui/material";
+import AddTodo from './AddTodo';
+import {Paper, List, Container}from "@mui/material";
 import './App.css';
 
 class App extends React.Component{
@@ -17,6 +18,16 @@ class App extends React.Component{
         };
     }
 
+    // (1) add 함수 추가
+    add = (item) => {
+        const thisItems = this.state.items;
+        item.id = "ID-"+ thisItems.length;  // key값을 위한 id 생성
+        item.done = false;
+        thisItems.push(item);
+        this.setState({items: thisItems});  // update state
+        console.log("items:", this.state.items);
+    }
+
     render(){
         // 자바스크립트가 제공하는 map 함수로 배열을 반복하여 <Todo /> 컴포넌트를 여러 개 생성
         var todoItems = this.state.items.length > 0 &&(
@@ -29,10 +40,13 @@ class App extends React.Component{
             </Paper>
         );
 
-        // 생성된 컴포넌트 JSX를 리턴
+        // (2) add 함수 연결
         return(
             <div className="App">
-                {todoItems}
+                <Container maxWidth="md">
+                    <AddTodo add={this.add}/>
+                    <div className="TodoList">{todoItems}</div>
+                </Container>
             </div>
         );
     }
