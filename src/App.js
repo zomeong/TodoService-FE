@@ -18,7 +18,7 @@ class App extends React.Component{
         };
     }
 
-    // (1) add 함수 추가
+    // add 함수 추가
     add = (item) => {
         const thisItems = this.state.items;
         item.id = "ID-"+ thisItems.length;  // key값을 위한 id 생성
@@ -28,19 +28,28 @@ class App extends React.Component{
         console.log("items:", this.state.items);
     }
 
+    // delete 함수 추가
+    delete =(item)=> {
+        const thisItems = this.state.items;
+        const newItems = thisItems.filter(e => e.id !== item.id);
+        this.setState({items: newItems},()=> {
+            console.log("Update Items:", this.state.items);    // 디버깅 콜백
+        });
+    }
+
     render(){
         // 자바스크립트가 제공하는 map 함수로 배열을 반복하여 <Todo /> 컴포넌트를 여러 개 생성
         var todoItems = this.state.items.length > 0 &&(
             <Paper style={{margin:16}}>
                 <List>
                     {this.state.items.map((item, idx) => (
-                        <Todo item={item} key={item.id}/>
+                        <Todo item={item} key={item.id} delete={this.delete}/>
                     ))}
                 </List>
             </Paper>
         );
 
-        // (2) add 함수 연결
+        // add 함수 연결
         return(
             <div className="App">
                 <Container maxWidth="md">
