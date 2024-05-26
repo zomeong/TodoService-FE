@@ -1,15 +1,16 @@
 import React from 'react';
 import Todo from './Todo';
 import AddTodo from './AddTodo';
-import {Paper,List, Container} from "@material-ui/core";
+import {Paper,List, Container,Grid,Button,AppBar,Toolbar,Typography} from "@material-ui/core";
 import './App.css';
-import {call} from './service/ApiService';
+import {call,signout} from './service/ApiService';
 
 class App extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
-          items :[{id:"todo 1",title: "todo 1",done:false}],
+          items :[],
+          loading:true,
       };
   }
   add = (item)=>{
@@ -21,8 +22,8 @@ class App extends React.Component {
   update = (item)=>{
     call("/todo","PUT",item).then((response)=>this.setState({items:response.data}));
   }
-  componentMidMount(){
-    call("/todo","GET",null).then((response)=>this.setState({items:response.data}));
+  componentDidMount(){
+    call("/todo","GET",null).then((response)=>this.setState({items:response.data,loading:false}));
   }
   render(){
     var todoItems = this.state.items.length > 0 && (
@@ -34,12 +35,36 @@ class App extends React.Component {
         </List>
       </Paper>
     );
-    return (
-      <div className="App">
+    var navigationBar=(
+      <AppBar position="static">
+        <Toolbar>
+          <Grid justify="space-between" container>
+            <Grid item>
+              <Typography variant="h6">오늘의 할일</Typography>
+            </Grid>
+            <Grid item>
+              <Button color="inherit" onClick={signout}>logout
+              </Button>
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
+    );
+    var todoListPage = (
+      <div>
+        {navigationBar}
         <Container maxWidth="md">
-          <AddTodo add={this.add}/>
+          <AddTodo add={this.add} />
           <div className="TodoList">{todoItems}</div>
         </Container>
+      </div>
+    );
+    var loadingPage = <h1>로딩중..</h1>
+    var content = loadingPage;
+    if (!this.state.loading) content=todoListPage;
+    return (
+      <div className="App">
+        {content}
       </div>
     );  
   }
