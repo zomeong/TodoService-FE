@@ -9,9 +9,16 @@ export function call(api,method,request){
     };
     if (request) options.body=JSON.stringify(request);
     return fetch(options.url, options).then((response)=>
-    response.json().then((json)=>{
+        response.json().then((json)=> {
         if(!response.ok) return Promise.reject(json);
         return json;
     })
-    );
+    )
+    .catch((error) => {
+        console.log(error.status);
+        if (error.status === 403) {
+            window.location.href = "/login";
+        }
+        return Promise.reject(error);
+    });
 }
