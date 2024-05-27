@@ -2,10 +2,10 @@ import React from "react";
 import {Button, TextField, Link, Grid, Container, Typography} from "@material-ui/core";
 import {signup} from "./service/ApiService";
 
-class Signup extends ReactComponent {
+class SignUp extends React.Component {
     constructor(props){
         super(props);
-        this.handleSubmit = this.handleSubmit(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
     handleSubmit(event) {
         event.preventDefault();
@@ -89,4 +89,4 @@ class Signup extends ReactComponent {
         );
     }
 }
-export default Signup
+export default SignUp

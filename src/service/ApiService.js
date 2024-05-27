@@ -35,14 +35,14 @@ export function signin(userDTO) {
     return call("/auth/signin","POST",userDTO)
     .then((response)=> {
         if (response.token) {
-            localStorage.setItem("ACCESS_TOKEN",reponse.token);
+            localStorage.setItem("ACCESS_TOKEN",response.token);
             window.location.href="/";
         }
     });
 }
 
-export function singup(userDTO) {
-    return call("/auth/singup","POST",userDTO)
+export function signup(userDTO) {
+    return call("/auth/signup","POST",userDTO)
     .then((response)=>{
         if(response.id) {
             window.location.href="/";
