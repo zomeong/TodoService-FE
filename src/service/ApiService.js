@@ -6,7 +6,7 @@ export function call(api, method, request) {
         "Content-Type": "application/json",
     });
     const accessToken = localStorage.getItem(ACCESS_TOKEN);
-    if (accessToken) headers.append("Authorization", accessToken);
+    if (accessToken) headers.append("Authorization", "Bearer " + accessToken);
     
     let options = {
         headers: headers,
@@ -34,16 +34,13 @@ export function call(api, method, request) {
 
 export function signin(userDTO) {
     return call("/auth/signin", "POST", userDTO)
+        .then((response) => response.json())
         .then((response) => {
-            const token = response.headers.get("Authorization"); // 응답 헤더에서 토큰 추출
+            console.log(response);
+            const token = response.token;
             if (token) {
                 localStorage.setItem(ACCESS_TOKEN, token);
-            }
-            return response.json(); // 응답을 JSON으로 변환
-        })
-        .then((response) => {
-            if (response.token) {
-                window.location.href = "/";
+                return window.location.href = "/";
             }
         })
         .catch((error) => {
