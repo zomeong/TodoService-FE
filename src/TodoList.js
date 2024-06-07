@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchTodos } from './service/TodoService';
 import Todo from './Todo';
-import { List, Button, Container, Typography, Grid } from '@material-ui/core';
+import { List, Button, Container, Typography, Grid, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 
 const TodoList = ({ add, delete: deleteTodo, update }) => {
     const [todos, setTodos] = useState([]);
@@ -36,15 +36,30 @@ const TodoList = ({ add, delete: deleteTodo, update }) => {
         }
     };
 
+    const handleSortChange = (event) => {
+        setSort(event.target.value);
+    };
+
     return (
         <Container>
             <Typography variant="h4" style={{ margin: '16px 0' }}>오늘의 할일</Typography>
-            <Grid container spacing={3} justify="space-between">
+            <Grid container justify="space-between" alignItems="center" style={{ marginBottom: '16px' }}>
                 <Grid item>
-                    <Button onClick={handlePreviousPage} disabled={page === 0}>Previous</Button>
+                    <Typography variant="h6">LIST</Typography>
                 </Grid>
                 <Grid item>
-                    <Button onClick={handleNextPage} disabled={page >= totalPages - 1}>Next</Button>
+                    <FormControl variant="outlined" style={{ minWidth: 120 }}>
+                        <InputLabel id="sort-label">정렬 기준</InputLabel>
+                        <Select
+                            labelId="sort-label"
+                            value={sort}
+                            onChange={handleSortChange}
+                            label="정렬 기준"
+                        >
+                            <MenuItem value="id">ID</MenuItem>
+                            <MenuItem value="title">제목</MenuItem>
+                        </Select>
+                    </FormControl>
                 </Grid>
             </Grid>
             <List>
@@ -52,6 +67,17 @@ const TodoList = ({ add, delete: deleteTodo, update }) => {
                     <Todo key={todo.id} item={todo} delete={deleteTodo} update={update} />
                 ))}
             </List>
+            <Grid container justify="space-between" alignItems="center" style={{ marginTop: '16px' }}>
+                <Grid item>
+                    <Button onClick={handlePreviousPage} disabled={page === 0}>Previous</Button>
+                </Grid>
+                <Grid item>
+                    <Typography>{page + 1} / {totalPages}</Typography>
+                </Grid>
+                <Grid item>
+                    <Button onClick={handleNextPage} disabled={page >= totalPages - 1}>Next</Button>
+                </Grid>
+            </Grid>
         </Container>
     );
 };
