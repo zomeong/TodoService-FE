@@ -7,7 +7,7 @@ const TodoList = ({ add, delete: deleteTodo, update }) => {
     const [todos, setTodos] = useState([]);
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(5);
-    const [sort, setSort] = useState('id');
+    const [sort, setSort] = useState('createdAt');
     const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
@@ -56,7 +56,7 @@ const TodoList = ({ add, delete: deleteTodo, update }) => {
                             onChange={handleSortChange}
                             label="정렬 기준"
                         >
-                            <MenuItem value="id">ID</MenuItem>
+                            <MenuItem value="createdAt">작성일</MenuItem>
                             <MenuItem value="title">제목</MenuItem>
                         </Select>
                     </FormControl>

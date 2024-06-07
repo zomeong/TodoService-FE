@@ -1,5 +1,5 @@
 import React from 'react';
-import {ListItem, ListItemText, InputBase, Checkbox, ListItemSecondaryAction, IconButton } from "@material-ui/core";
+import {ListItem, ListItemText, InputBase, Checkbox, ListItemSecondaryAction, IconButton, Typography } from "@material-ui/core";
 import DeleteOutlined from "@material-ui/icons/DeleteOutlined";
 
 
@@ -10,25 +10,30 @@ class Todo extends React.Component {
         this.delete = props.delete;
         this.update = props.update;
     }
+
     deleteEventHandler =()=>{
         this.delete(this.state.item);
     }
+
     offReadOnlyMode =()=>{
         this.setState({readOnly:false},()=>{
             console.log("ReadOnly?",this.state.readOnly)
         });
     }
+
     enterKeyEventHandler =(e)=>{
         if(e.key ==="Enter") {
             this.setState({readOnly:true});
             this.update(this.state.item);
         }
     }
+
     editEventHandler =(e)=>{
         const thisItem = this.state.item;
         thisItem.title=e.target.value;
         this.setState({item:thisItem});
     }
+
     checkboxEventHandler =(e)=>{
         const thisItem = this.state.item;
         thisItem.done = thisItem.done ? false : true;
@@ -36,8 +41,12 @@ class Todo extends React.Component {
         this.setState({readOnly: true});
         this.update(this.state.item);
     }
+
     render() {
         const item = this.state.item;
+        const createdAt = new Date(item.createdAt);
+        const formattedDate = `${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
+
         return (
             <ListItem>
                 <Checkbox
@@ -58,6 +67,9 @@ class Todo extends React.Component {
                     onKeyPress={this.enterKeyEventHandler}
                     />
                 </ListItemText>
+                <Typography variant="body2" color="textSecondary" style={{ marginRight: '16px' }}>
+                    {formattedDate}
+                </Typography>
                 <ListItemSecondaryAction>
                     <IconButton aria-label="Delete"
                     onClick={this.deleteEventHandler}>
@@ -68,4 +80,5 @@ class Todo extends React.Component {
         );
     }
 }
+
 export default Todo;
