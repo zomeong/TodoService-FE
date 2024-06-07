@@ -1,8 +1,7 @@
 import React from 'react';
-import Todo from './Todo';
 import TodoList from './TodoList';
 import AddTodo from './AddTodo';
-import { Paper, List, Container, Grid, Button, AppBar, Toolbar, Typography, TextField } from "@material-ui/core";
+import { Container, Grid, Button, AppBar, Toolbar, Typography } from "@material-ui/core";
 import './App.css';
 import { call, signout } from './service/ApiService';
 
@@ -11,9 +10,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       items: [],
-      selectedItems: new Set(),
       loading: true,
-      searchQuery: '',
     };
   }
 
@@ -29,56 +26,11 @@ class App extends React.Component {
     call("/todo", "PUT", item).then((response) => this.setState({ items: response.data }));
   }
 
-  deleteBatch = () => {
-    const { selectedItems } = this.state;
-    call("/todo/batch", "DELETE", Array.from(selectedItems)).then((response) =>
-      this.setState({ items: response.data, selectedItems: new Set() }));
-  }
-
-  toggleSelect = (id) => {
-    this.setState((prevState) => {
-      const selectedItems = new Set(prevState.selectedItems);
-      if (selectedItems.has(id)) {
-        selectedItems.delete(id);
-      } else {
-        selectedItems.add(id);
-      }
-      return { selectedItems };
-    });
-  }
-
   componentDidMount() {
     call("/todo", "GET", null).then((response) => this.setState({ items: response.data, loading: false }));
   }
 
-  handleSearch = (event) => {
-    this.setState({ searchQuery: event.target.value });
-  }
-
   render() {
-    const { items, selectedItems, searchQuery } = this.state;
-
-    const filteredItems = items.filter(item =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    const todoItems = filteredItems.length > 0 && (
-      <Paper style={{ margin: 16 }}>
-        <List>
-          {filteredItems.map((item, idx) => (
-            <Todo
-              item={item}
-              key={item.id}
-              delete={this.delete}
-              update={this.update}
-              toggleSelect={this.toggleSelect}
-              isSelected={selectedItems.has(item.id)}
-            />
-          ))}
-        </List>
-      </Paper>
-    );
-
     const navigationBar = (
       <AppBar position="static">
         <Toolbar>
@@ -94,43 +46,22 @@ class App extends React.Component {
       </AppBar>
     );
 
-    const todoListPage = (
+    const content = this.state.loading ? <h1>로딩중..</h1> : (
       <div>
         {navigationBar}
         <Container maxWidth="md">
           <AddTodo add={this.add} />
-          <TextField
-            label="필터"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={searchQuery}
-            onChange={this.handleSearch}
-            style={{ width: '200px', height: '40px', marginBottom: 16 }}
-          />
-          <div className="TodoList">{todoItems}</div>
           <TodoList add={this.add} delete={this.delete} update={this.update} />
         </Container>
       </div>
     );
 
-    const loadingPage = <h1>로딩중..</h1>
-    const content = this.state.loading ? loadingPage : todoListPage;
-
     return (
       <div className="App">
         {content}
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={this.deleteBatch}
-          disabled={selectedItems.size === 0}
-          style={{ margin: 16 }}
-        >
-          Delete Selected
-        </Button>
       </div>
     );
   }
 }
+
 export default App;
