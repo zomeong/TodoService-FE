@@ -32,8 +32,9 @@ class Todo extends React.Component {
     }
     checkboxEventHandler =(e)=>{
         const thisItem = this.state.item;
-        thisItem.done=thisItem.done?false:true;
-        this.setState({item:thisItem});
+        thisItem.done = thisItem.done ? false : true;
+        //this.setState({item: thisItem});
+        this.setState({readOnly: true});
         this.update(this.state.item);
     }
     selectCheckboxEventHandler = (e) => {
