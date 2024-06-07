@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, Container, Grid, Button, AppBar, Toolbar, Typography } from '@material-ui/core';
+import Todo from './Todo';
 import TodoList from './TodoList';
 import AddTodo from './AddTodo';
 import { Paper, List, Container, Grid, Button, AppBar, Toolbar, Typography, TextField } from "@material-ui/core";
