@@ -9,6 +9,7 @@ class Todo extends React.Component {
         this.state = { item: props.item, readOnly:true};
         this.delete = props.delete;
         this.update = props.update;
+        this.toggleSelect = props.toggleSelect;
     }
 
     deleteEventHandler =()=>{
@@ -41,9 +42,12 @@ class Todo extends React.Component {
         this.setState({readOnly: true});
         this.update(this.state.item);
     }
-
+    selectCheckboxEventHandler = (e) => {
+        this.toggleSelect(this.state.item.id);
+    }
     render() {
         const item = this.state.item;
+        const { isSelected } = this.props;
         const createdAt = new Date(item.createdAt);
         const formattedDate = `${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
 
@@ -55,7 +59,7 @@ class Todo extends React.Component {
                 />
                 <ListItemText>
                     <InputBase
-                    iputProps={{"aria-label":"naked",readOnly:this.state.readOnly}}
+                    inputProps={{"aria-label":"naked",readOnly:this.state.readOnly}}
                     type="text"
                     id={item.id}
                     name={item.id}
@@ -70,6 +74,10 @@ class Todo extends React.Component {
                 <Typography variant="body2" color="textSecondary" style={{ marginRight: '16px' }}>
                     {formattedDate}
                 </Typography>
+                <Checkbox
+                checked={isSelected}
+                onChange={this.selectCheckboxEventHandler}
+                />
                 <ListItemSecondaryAction>
                     <IconButton aria-label="Delete"
                     onClick={this.deleteEventHandler}>
