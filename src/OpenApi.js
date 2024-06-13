@@ -8,21 +8,30 @@ const OpenApi = () => {
     const [sky, setSky] = useState("상태");
     const [pop, setPop] = useState("상태");
 
-    useEffect(() => {
-        const now = new Date();
+    const apiTimes = [2, 5, 8, 11, 14, 17, 20, 23];
+    const now = new Date();
+    const hours = now.getHours();
 
+    let closestTime = apiTimes[0];
+    apiTimes.forEach(time => {
+        if (Math.abs(hours - time) < Math.abs(hours - closestTime)) {
+            closestTime = time;
+        }
+    });
+
+    useEffect(() => {
         const url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
-        const serviceKey = process.env.REACT_APP_SERVICE_KEY;
+        const serviceKey = 'Zbqmtor%2Bf0TOuDgrClIXzb1Q2OO3HCId%2BpBX8Xk4WozBsTSTwKZCDRZVR5MUUObVUOyjT2CgtfB%2BwlNDqn%2B4GQ%3D%3D';
         const pageNo = 1;
         const numOfRows = 100;
         const dataType = 'JSON';
         const baseDate = now.toISOString().slice(0, 10).replace(/-/g, ''); 
-        const baseTime = (now.getHours() - 1).toString().padStart(2, '0') + '00';
+        const baseTime = closestTime.toString().padStart(2, '0') + '00';
         const nx = 57;
         const ny = 125;
 
         const constructedUrl = `${url}?serviceKey=${serviceKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&base_date=${baseDate}&base_time=${baseTime}&nx=${nx}&ny=${ny}`;
-
+        
         fetch(constructedUrl)
             .then(res => res.json())
             .then(data => {
@@ -58,7 +67,7 @@ const OpenApi = () => {
                     경기도 부천시 원미구 역곡 2동 날씨 정보
                 </Typography>
                 <Typography variant="body1">
-                    하늘 : {sky} / 
+                    하늘: {sky} / 
                     온도: {temp}°C / 
                     습도: {hum}% / 
                     강수 확률: {pop}% /
