@@ -72,7 +72,6 @@ const TodoList = ({ add, delete: deleteTodo, update }) => {
 
     return (
         <Container>
-            <Typography variant="h4" style={{ margin: '16px 0' }}>오늘의 할일</Typography>
             <Grid container justify="space-between" alignItems="center" style={{ marginBottom: '16px' }}>
                 <Grid item>
                     <TextField
