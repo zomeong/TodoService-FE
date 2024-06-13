@@ -5,6 +5,7 @@ import OpenApi from './OpenApi';
 import './App.css';
 import { Container, Grid, Button, AppBar, Toolbar, Typography } from "@material-ui/core";
 import { call, signout } from './service/ApiService';
+import { fetchTodos } from './service/TodoService';
 
 class App extends React.Component {
   constructor(props) {
@@ -12,24 +13,45 @@ class App extends React.Component {
     this.state = {
       items: [],
       loading: true,
+      page: 0,
+      size: 5,
+      sort: 'createdAt',
+      totalPages: 0,
     };
   }
 
   add = (item) => {
     call("/todo", "POST", item).then((response) => this.setState({ items: response.data }));
+    this.loadTodos();
   }
 
   delete = (item) => {
     call("/todo", "DELETE", item).then((response) => this.setState({ items: response.data }));
+    this.loadTodos();
   }
 
   update = (item) => {
     call("/todo", "PUT", item).then((response) => this.setState({ items: response.data }));
+    this.loadTodos();
   }
 
   componentDidMount() {
-    call("/todo", "GET", null).then((response) => this.setState({ items: response.data, loading: false }));
+    this.loadTodos();
   }
+
+  loadTodos = async () => {
+    const { page, size, sort } = this.state;
+    try {
+      const response = await fetchTodos(page, size, sort); 
+      this.setState({
+        items: response.data.content,
+        totalPages: response.data.totalPages,
+        loading: false,
+      });
+    } catch (error) {
+      console.error("Failed to fetch todos:", error);
+    }
+  };
 
   render() {
     const navigationBar = (

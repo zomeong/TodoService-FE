@@ -10,10 +10,12 @@ class Todo extends React.Component {
         this.delete = props.delete;
         this.update = props.update;
         this.toggleSelect = props.toggleSelect;
+        this.loadTodos = props.loadTodos;
     }
 
     deleteEventHandler =()=>{
         this.delete(this.state.item);
+        this.loadTodos();
     }
 
     offReadOnlyMode =()=>{
@@ -35,16 +37,19 @@ class Todo extends React.Component {
         this.setState({item:thisItem});
     }
 
-    checkboxEventHandler =(e)=>{
+    checkboxEventHandler = async (e)=>{
         const thisItem = this.state.item;
-        thisItem.done = thisItem.done ? false : true;
+        thisItem.done = !thisItem.done;
         //this.setState({item: thisItem});
         this.setState({readOnly: true});
-        this.update(this.state.item);
+        await this.update(this.state.item);
+        await this.loadTodos();
     }
+
     selectCheckboxEventHandler = (e) => {
         this.toggleSelect(this.state.item.id);
     }
+    
     render() {
         const item = this.state.item;
         const { isSelected } = this.props;
