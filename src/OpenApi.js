@@ -6,6 +6,7 @@ const OpenApi = () => {
     const [hum, setHum] = useState("상태");
     const [wsd, setWsd] = useState("상태");
     const [sky, setSky] = useState("상태");
+    const [pop, setPop] = useState("상태");
 
     useEffect(() => {
         const now = new Date();
@@ -30,10 +31,12 @@ const OpenApi = () => {
                 const humItem = items.find(item => item.category === "REH");
                 const wsdItem = items.find(item => item.category === "WSD");
                 const skyItem = items.find(item => item.category === "SKY");
+                const popItem = items.find(item => item.category === "POP");
                 
                 setTemp(tempItem.fcstValue);
                 setHum(humItem.fcstValue);
                 setWsd(wsdItem.fcstValue);
+                setPop(popItem.fcstValue);
 
                 if(skyItem.fcstValue === "1") {
                     setSky("맑음");
@@ -58,6 +61,7 @@ const OpenApi = () => {
                     하늘 : {sky} / 
                     온도: {temp}°C / 
                     습도: {hum}% / 
+                    강수 확률: {pop}% /
                     풍속: {wsd}m/s 
                 </Typography>
             </div>
