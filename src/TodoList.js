@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { fetchTodos } from './service/TodoService';
+import { fetchTodos, fetchAllTodos } from './service/TodoService';
 import { call } from './service/ApiService';
 import Todo from './Todo';
-import { List, Button, Container, Typography, Grid, FormControl, InputLabel, Select, MenuItem, TextField, Paper } from '@material-ui/core';
+import { List, Button, Container, Typography, Grid, FormControl, InputLabel, Select, MenuItem, TextField, Paper, LinearProgress, Box } from '@material-ui/core';
 
 const TodoList = ({ add, delete: deleteTodo, update }) => {
     const [todos, setTodos] = useState([]);
@@ -12,9 +12,11 @@ const TodoList = ({ add, delete: deleteTodo, update }) => {
     const [totalPages, setTotalPages] = useState(0);
     const [selectedItems, setSelectedItems] = useState(new Set());
     const [searchQuery, setSearchQuery] = useState('');
+    const [completedPercent, setCompletedPercent] = useState(0);
 
     useEffect(() => {
         loadTodos();
+        calculateCompletedPercent();
     }, [page, size, sort]);
 
     const loadTodos = async () => {
@@ -24,6 +26,18 @@ const TodoList = ({ add, delete: deleteTodo, update }) => {
             setTotalPages(response.data.totalPages);
         } catch (error) {
             console.error("Failed to fetch todos:", error);
+        }
+    };
+
+    const calculateCompletedPercent = async () => {
+        try {
+            const response = await fetchAllTodos();
+            const totalTodos = response.data.length;
+            const completedTodos = response.data.filter(todo => todo.done).length;
+            const percent = totalTodos === 0 ? 0 : (completedTodos / totalTodos) * 100;
+            setCompletedPercent(percent);
+        } catch (error) {
+            console.error("Failed to calculate completed percentage:", error);
         }
     };
 
@@ -57,6 +71,7 @@ const TodoList = ({ add, delete: deleteTodo, update }) => {
             }
             return newSelectedItems;
         });
+        loadTodos();
     };
 
     const deleteBatch = () => {
@@ -109,10 +124,21 @@ const TodoList = ({ add, delete: deleteTodo, update }) => {
                             update={update}
                             toggleSelect={toggleSelect}
                             isSelected={selectedItems.has(todo.id)}
+                            loadTodos={loadTodos}
                         />
                     ))}
                 </List>
             </Paper>
+            <Box display="flex" alignItems="center" style={{ marginTop: '16px' }}>
+                <Box width="100%" mr={1}>
+                    <LinearProgress variant="determinate" value={completedPercent} />
+                </Box>
+                <Box minWidth={35}>
+                    <Typography variant="body2" color="textSecondary" style={{ whiteSpace: 'nowrap' }}>
+                        {`${Math.round(completedPercent)}% 완료됨`}
+                    </Typography>
+                </Box>
+            </Box>
             <Grid container justify="space-between" alignItems="center" style={{ marginTop: '16px' }}>
                 <Grid item>
                     <Button onClick={handlePreviousPage} disabled={page === 0}>Previous</Button>
